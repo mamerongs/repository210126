@@ -41,6 +41,12 @@
 	</dependencies>
 
 	<build>
+		<!-- 21.01.27 추가 -->
+		<resources>
+			<resource>
+				<directory>${basedir}/src/main/resources</directory>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -55,6 +61,16 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<!-- 21.01.27 추가 -->
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>3.1.1</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 </project>
