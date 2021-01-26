@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Insert title here</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.20/lodash.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script type="text/javascript" src="/js/demo.js"></script>
+</head>
+<body>
+
+<div id="header"></div>
+<div id="content">
+	<div id="test1">
+		<global-component></global-component>
+	</div>
+	<div id="test2">
+		<global-component></global-component>
+		<local-component></local-component>
+	</div>
+	<div id="test3">
+		<child-component v-bind:prop01="text"></child-component>
+	</div>
+</div>
+<div id="footer"></div>
+
+<script>
+// 하위 컴포넌트 props 속성 시작
+Vue.component('child-component',{
+	props : ['prop01'],
+	template : '<div>{{ prop01 }}</div>'
+});
+new Vue({
+	el : '#test3',
+	data : {
+		text : 'props test'
+	}
+});
+// 하위 컴포넌트 props 속성 끝
+
+// 전역 컴포넌트 등록 시작
+Vue.component('global-component', {
+	template : '<div>전역 컴포넌트 등록 테스트중</div>'
+});
+new Vue({
+	el : '#test1'
+});
+// 전역 컴포넌트 등록 끝
+
+// 지역 컴포넌트 등록 시작
+var cmp = {
+		template : '<div>지역 컴포넌트 등록 테스트중</div>'
+};
+new Vue({
+	el : '#test2',
+	components : {
+		'local-component' : cmp
+	}
+});
+// 지역 컴포넌트 등록 끝
+
+var header = new Vue({
+	el : '#header',
+	data : {
+		text : 'header'
+	},
+	template : '<div>{{ text }}</div>',
+	beforeCreate : function(){
+		console.info('beforeCreate');
+		/* 
+		인스턴스 생성 후 첫번째로 실행되는 라이프 사이클 단계
+		속성들이 인스턴스에 정의되어 있지 않고, 화면 요소에도 접근 불가능 */
+	},
+	created : function(){
+		console.info('create');
+		/* 
+		beforeCreate 다음에 실행되는 단계
+		data 속성과 methods 속성이 정의되어 접근하여 로직 실행 가능
+		인스턴스가 화면 요소에 부착되지 않아 template 속성에 정의된 돔 요소로 접근 불가능 */
+	},
+	beforeMount : function(){
+		console.info('beforeMount');
+		/* 
+		create 다음에 실행되는 단계
+		template 속성에 지정한 마크업 속성을 render() 함수로 변환 후 el 속성에 지정한 화면 요소에 인스턴스를 부착하기 전 호출되는 단계
+		render() 함수가 호출되기 직전의 로직 추가 가능 */
+	},
+	mounted : function(){
+		console.info('mounted');
+		/* 
+		el 속성에서 지정한 화면 요소에 인스턴스가 부착되고 나면 호출되는 단계
+		template 속성에 정의한 화면 요소에 접근할 수 있어 화면 요소를 제어하는 로직 추가 가능
+		돔에 인스턴스가 부착되자마자 바로 호출되기 떄문에 하위 컴포넌트나 외부 라이브러리에 의해 추가된 화면 요소들이 최종 html 코드로 변환되는 시점과 다를 수 있음
+		그럴 경우 $next Tick() api를 사용하여 html 코드로 최종 파싱될 때까지 기다린 후 돔 제어 로직을 추가 */
+		
+		//this.message = 'updated??';
+	},
+	beforeUpdate : function(){
+		console.info('beforeUpdate');
+		/* 
+		관찰하고 있는 데이터가 변경되면 가상 돔으로 화면을 다시 그리기 전에 호출되는 단계
+		변경할 데이터에 접근 가능하여 변경할 데이터의 값과 관련된 로직 추가
+		=> 데이터 값을 갱신하는 로직 추가*/
+	},
+	updated : function(){
+		console.info('updated');
+		/* 
+		데이터가 변경되고 나서 가상 돔으로 다시 화면을 그리고나면 실행되는 단계
+		데이텨 변경으로 인한 화면 요소 변경까지 완료된 상태
+		데이터 변경 후 화면 요소 제어와 관련된 로직을 추가
+		데이터 값을 변경하려면 conputed, watch와 같은 속성 사용
+		=> 변경 데이터의 화면 요소와 관련된 로직 추가 */
+	},
+	beforeDestoy : function(){
+		console.info('beforeDestoy');
+		/* 
+		뷰 인스턴스가 파괴되기 직전에 호출되는 단계
+		뷰 인스턴스의 데이터 삭제 */
+	},
+	destroyed : function(){
+		console.info('destroyed');
+		/*
+		뷰 인스턴스가 파괴된 후 호출되는 단계
+		뷰 인스턴스에 정의한 모든 속성이 제거되고 하위에 선언한 인스턴스들까지 파괴됨*/
+	}
+});
+
+/* var content = new Vue({
+	el : '#content',
+	data : {
+		text : 'content'
+	},
+	//template : '<div>{{ text }}</div>'
+}); */
+
+var footer = new Vue({
+	el : '#footer',
+	data : {
+		text : 'footer'
+	},
+	template : '<div>{{ text }}</div>'
+});
+</script>
+
+</body>
+</html>
